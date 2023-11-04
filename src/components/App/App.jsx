@@ -16,6 +16,7 @@ const App = () => {
   const [contacts, setContacts] = useState([]);
   const [filter, setFilter] = useState('');
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const localData = getLocalStorageData('contacts');
     if (localData && localData.length > 0) {
