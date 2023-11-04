@@ -13,21 +13,27 @@ const App = () => {
     { id: nanoid(), name: 'Annie Copeland', number: '227-91-26' },
   ];
 
-  const [contacts, setContacts] = useState(() => {
-    const localData = localStorage.getItem('contacts');
-    return localData ? JSON.parse(localData) : defaultContacts;
-  });
+  const [contacts, setContacts] = useState([]);
   const [filter, setFilter] = useState('');
 
-  // useEffect(() => {
-  //   const localData = JSON.parse(localStorage.getItem('contacts'));
-  //   if (localData) {
-  //     setContacts(localData);
-  //   }
-  // }, []);
   useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
+    const localData = getLocalStorageData('contacts');
+    if (localData && localData.length > 0) {
+      setContacts(localData);
+    } else {
+      setContacts(defaultContacts);
+      saveLocalStorageData('contacts', defaultContacts);
+    }
+  }, []);
+
+  const getLocalStorageData = key => {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : null;
+  };
+
+  const saveLocalStorageData = (key, data) => {
+    localStorage.setItem(key, JSON.stringify(data));
+  };
 
   const createContact = dataByForm => {
     const contactName = dataByForm.name.toLowerCase();
@@ -45,29 +51,30 @@ const App = () => {
       ...dataByForm,
       id: nanoid(),
     };
-    // setContacts(prevState => ({
-    //   contacts: [newContact, ...prevState.contacts],
-    // }));
-
     setContacts(prevContacts => [newContact, ...prevContacts]);
+    saveLocalStorageData('contacts', [newContact, ...contacts]);
   };
 
   const filterContacts = filteredQuery => {
     setFilter(filteredQuery);
   };
+
   const deleteContact = id => {
-    // setContacts(prevState => ({
-    //   contacts: prevState.contacts.filter(contact => contact.id !== id),
-    // }));
     setContacts(prevContacts =>
       prevContacts.filter(contact => contact.id !== id)
     );
+    saveLocalStorageData(
+      'contacts',
+      contacts.filter(contact => contact.id !== id)
+    );
   };
+
   const filteredContacts = filter
     ? contacts.filter(contact =>
         contact.name.toLowerCase().includes(filter.toLowerCase())
       )
     : contacts;
+
   return (
     <>
       <Section title="Phonebook">
