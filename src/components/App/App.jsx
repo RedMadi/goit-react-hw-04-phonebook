@@ -20,14 +20,11 @@ const App = () => {
   const [filter, setFilter] = useState('');
 
   // useEffect(() => {
-  //   const localData = localStorage.getItem('contacts');
-  //   if (!localData || JSON.parse(localData).length === 0) {
-  //     localStorage.setItem('contacts', JSON.stringify(contacts));
-  //   } else {
-  //     setContacts(JSON.parse(localData));
+  //   const localData = JSON.parse(localStorage.getItem('contacts'));
+  //   if (localData) {
+  //     setContacts(localData);
   //   }
   // }, []);
-
   useEffect(() => {
     localStorage.setItem('contacts', JSON.stringify(contacts));
   }, [contacts]);
