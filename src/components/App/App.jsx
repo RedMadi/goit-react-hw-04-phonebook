@@ -51,6 +51,7 @@ const App = () => {
     // setContacts(prevState => ({
     //   contacts: [newContact, ...prevState.contacts],
     // }));
+
     setContacts(prevContacts => [newContact, ...prevContacts]);
   };
 
