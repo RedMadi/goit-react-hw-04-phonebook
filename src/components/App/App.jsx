@@ -6,24 +6,12 @@ import { Section } from 'components/Section/Section';
 import { Filter } from 'components/Filter/Filter';
 
 const App = () => {
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState(() => {
+    const stringifiedContacts = localStorage.getItem('contacts');
+    const parsedContacts = JSON.parse(stringifiedContacts) ?? [];
+    return parsedContacts;
+  });
   const [filter, setFilter] = useState('');
-
-  useEffect(() => {
-    const localData = getLocalStorageData('contacts');
-    if (localData) {
-      setContacts(localData);
-    }
-  }, []);
-
-  const getLocalStorageData = key => {
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : null;
-  };
-
-  const saveLocalStorageData = (key, data) => {
-    localStorage.setItem(key, JSON.stringify(data));
-  };
 
   const createContact = dataByForm => {
     const contactName = dataByForm.name.toLowerCase();
@@ -42,7 +30,6 @@ const App = () => {
       id: nanoid(),
     };
     setContacts(prevContacts => [newContact, ...prevContacts]);
-    saveLocalStorageData('contacts', [newContact, ...contacts]);
   };
 
   const filterContacts = filteredQuery => {
@@ -53,11 +40,10 @@ const App = () => {
     setContacts(prevContacts =>
       prevContacts.filter(contact => contact.id !== id)
     );
-    saveLocalStorageData(
-      'contacts',
-      contacts.filter(contact => contact.id !== id)
-    );
   };
+  useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
 
   const filteredContacts = filter
     ? contacts.filter(contact =>
